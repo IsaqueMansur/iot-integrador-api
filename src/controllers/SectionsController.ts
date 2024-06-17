@@ -48,17 +48,19 @@ export class SectionsController {
   @Post("/response")
   async storeResponse(@Body() body: ISectionResponseProtocol) {
     try {
+      console.log(body);
       const { key, response } = body;
       const section = await this.PrismaInstance.sections.findUnique({
         where: { key },
       });
       if (!section) throw new ErrorRequest(404, "Sessão não encontrada");
       await this.PrismaInstance.sections.update({
-        where: { key },
+        where: { id: section.id },
         data: {
           last_response: response,
         },
       });
+      return { message: "Success" };
     } catch (Error: any) {
       throw new ErrorRequest(
         Error.httpCode ? Error.httpCode : 500,
