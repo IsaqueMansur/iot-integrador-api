@@ -2,7 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { Body, Get, Post, JsonController, Param } from "routing-controllers";
 import ErrorRequest from "./private/PErrorController";
 import createRandomToken from "../utils/createRandomToken";
-import { ISectionResponseProtocol } from "../interfaces/ISection";
+import {
+  ISectionResponseProtocol,
+  ISectionValidateResponseProtocol,
+} from "../interfaces/ISection";
 
 @JsonController("/sections")
 export class SectionsController {
@@ -36,6 +39,30 @@ export class SectionsController {
       });
       if (!section) throw new ErrorRequest(404, "Sessão não encontrada");
       return section;
+    } catch (Error: any) {
+      throw new ErrorRequest(
+        Error.httpCode ? Error.httpCode : 500,
+        Error.message ? Error.message : "Falha interna no servidor"
+      );
+    }
+  }
+
+  @Post("/nextQuestion")
+  async nextSectionQuestion(@Body() body: ISectionValidateResponseProtocol) {
+    try {
+      const { key, next_question_number } = body;
+      const section = await this.PrismaInstance.sections.findUnique({
+        where: { key },
+      });
+      if (!section) throw new ErrorRequest(404, "Sessão não encontrada");
+      await this.PrismaInstance.sections.update({
+        where: { id: section.id },
+        data: {
+          question_number: Number(next_question_number),
+          last_response: "",
+        },
+      });
+      return { message: "Success" };
     } catch (Error: any) {
       throw new ErrorRequest(
         Error.httpCode ? Error.httpCode : 500,
