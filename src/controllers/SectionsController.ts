@@ -48,7 +48,6 @@ export class SectionsController {
   @Post("/response")
   async storeResponse(@Body() body: ISectionResponseProtocol) {
     try {
-      console.log(body);
       const { key, response } = body;
       const section = await this.PrismaInstance.sections.findUnique({
         where: { key },
