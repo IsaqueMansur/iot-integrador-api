@@ -8,12 +8,11 @@ datasource db {
 }
 
 model sections {
-  id                  Int      @id @default(autoincrement())
-  key                 String   @unique
-  activated           Boolean  @default(false)
-  question_number     Int      @default(1)
-  last_response       String
-  created_at          DateTime @default(now()) @db.Timestamptz(3)
-  updated_at          DateTime @updatedAt @db.Timestamptz(3)
-  response_led_status String   @default("off")
+  id              Int      @id @default(autoincrement())
+  key             String   @unique
+  activated       Boolean  @default(false)
+  question_number Int      @default(1)
+  last_response   String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 }
