@@ -94,4 +94,26 @@ export class SectionsController {
       );
     }
   }
+
+  @Get("/validateConnection/:key")
+  async validateMicrocontrollerConnection(@Param("key") key: string) {
+    try {
+      const section = await this.PrismaInstance.sections.findUnique({
+        where: { key },
+      });
+      if (!section) throw new ErrorRequest(404, "Sessão não encontrada");
+      await this.PrismaInstance.sections.update({
+        where: { id: section.id },
+        data: {
+          activated: true,
+        },
+      });
+      return true;
+    } catch (Error: any) {
+      throw new ErrorRequest(
+        Error.httpCode ? Error.httpCode : 500,
+        Error.message ? Error.message : "Falha interna no servidor"
+      );
+    }
+  }
 }
