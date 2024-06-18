@@ -102,12 +102,14 @@ export class SectionsController {
         where: { key },
       });
       if (!section) throw new ErrorRequest(404, "Sessão não encontrada");
-      await this.PrismaInstance.sections.update({
-        where: { id: section.id },
-        data: {
-          activated: true,
-        },
-      });
+      if (!section.activated) {
+        await this.PrismaInstance.sections.update({
+          where: { id: section.id },
+          data: {
+            activated: true,
+          },
+        });
+      }
       return true;
     } catch (Error: any) {
       throw new ErrorRequest(
